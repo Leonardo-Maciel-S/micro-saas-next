@@ -39,7 +39,7 @@ export async function createUsername(data: CreateUsernameFormData) {
 
     const existSlug = await prisma.user.findUnique({
       where: {
-        id: userId,
+        username: slug,
       },
     });
 

@@ -3,9 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { createUsername } from "../_actions/create-username";
 import { useState } from "react";
+import Link from "next/link";
+import { Link2 } from "lucide-react";
 
-export default function UrlPreview() {
+interface UrlPreviewProps {
+  username: string | null;
+}
+
+export default function UrlPreview({ username: slug }: UrlPreviewProps) {
   const [error, setError] = useState<null | string>(null);
+  const [username, setUsername] = useState(slug);
 
   const submitAction = async (formData: FormData) => {
     setError("");
@@ -20,8 +27,39 @@ export default function UrlPreview() {
 
     if (response.error) {
       setError(response.error);
+      return;
+    }
+
+    if (response.data) {
+      setUsername(response.data);
     }
   };
+
+  if (!!username) {
+    return (
+      <div className="w-full">
+        <div className="flex items-center justify-between flex-1 p-2 text-gray-100">
+          <div className="flex flex-col md:flex-row  items-start md:items-center md:justify-center gap-2 ">
+            <h3 className="font-bold text-lg">Sua URL:</h3>
+            <Link
+              href={`${process.env.NEXT_PUBLIC_HOST_URL}/creator/${username}`}
+              target="_blank"
+            >
+              {process.env.NEXT_PUBLIC_HOST_URL}/creator/{username}
+            </Link>
+          </div>
+
+          <Link
+            className="bg-blue-500 px-4 py-1 rounded-md hidden md:flex"
+            href={`${process.env.NEXT_PUBLIC_HOST_URL}/creator/${username}`}
+            target="_blank"
+          >
+            <Link2 className="w-5 h-5 text-white" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
