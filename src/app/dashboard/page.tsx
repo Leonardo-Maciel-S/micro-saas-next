@@ -1,9 +1,16 @@
 import { DonationTable } from "./_components/donates";
 import { Stats } from "./_components/analytics";
 
+import { redirect } from "next/navigation";
 
+import { auth } from "@/lib/auth";
 
 export default async function Dashboard() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/");
+  }
 
   return (
     <div className="p-4">
@@ -14,7 +21,6 @@ export default async function Dashboard() {
       </section>
 
       <Stats />
-
 
       <h2 className="text-2xl font-semibold mb-2">Últimas doações</h2>
       <DonationTable />
