@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
+import { createPayment } from "../_actions/create-payment";
 
 const formSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
@@ -27,7 +28,12 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-export default function FromDonate() {
+interface FormDonateProps {
+  slug: string;
+  creatorId: string;
+}
+
+export default function FormDonate({ slug, creatorId }: FormDonateProps) {
   const priceList = ["15", "25", "35"];
 
   const form = useForm<FormSchema>({
@@ -39,8 +45,18 @@ export default function FromDonate() {
     },
   });
 
-  const onSubmit = (value: FormSchema) => {
-    console.log(value);
+  const onSubmit = async (data: FormSchema) => {
+    const priceInCents = Number(data.price) * 100;
+
+    const checkout = await createPayment({
+      name: data.name,
+      message: data.message,
+      creatorId,
+      slug,
+      price: priceInCents,
+    });
+
+    console.log(checkout);
   };
 
   return (
