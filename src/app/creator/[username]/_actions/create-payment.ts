@@ -19,14 +19,12 @@ export async function createPayment(data: CreatePaymentSchema) {
 
   if (!schema.success) {
     return {
-      data: null,
       error: schema.error.issues[0].message,
     };
   }
 
   if (!data.creatorId) {
     return {
-      data: null,
       error: "Criador não encontrado",
     };
   }
@@ -40,7 +38,6 @@ export async function createPayment(data: CreatePaymentSchema) {
 
     if (!creator) {
       return {
-        data: null,
         error: "Falha ao criar pagamento, tente novamente mais tarde. 1",
       };
     }
@@ -88,13 +85,10 @@ export async function createPayment(data: CreatePaymentSchema) {
     });
 
     return {
-      data: JSON.stringify(session),
-      error: null,
+      sessionId: session.id,
     };
   } catch (error) {
-    console.log(error);
     return {
-      data: null,
       error: "Falha ao criar pagamento, tente novamente mais tarde. 2",
     };
   }
