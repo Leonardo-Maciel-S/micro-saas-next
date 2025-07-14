@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { createPayment } from "../_actions/create-payment";
+import { toast } from "sonner";
+import { getStripeJs } from "@/lib/stripe-js";
 
 const formSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório"),
@@ -56,7 +58,20 @@ export default function FormDonate({ slug, creatorId }: FormDonateProps) {
       price: priceInCents,
     });
 
-    console.log(checkout);
+    if (checkout.error) {
+      toast.error(checkout.error);
+      return;
+    }
+
+    if (checkout.data) {
+      const data = JSON.parse(checkout.data);
+
+      const stripe = await getStripeJs();
+
+      await stripe?.redirectToCheckout({
+        sessionId: data.id as string,
+      });
+    }
   };
 
   return (
@@ -127,7 +142,9 @@ export default function FormDonate({ slug, creatorId }: FormDonateProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">Fazer doação</Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Carregando..." : "Fazer doação"}
+        </Button>
       </form>
     </Form>
   );
