@@ -113,7 +113,7 @@ export default function FormDonate({ slug, creatorId }: FormDonateProps) {
                   className="flex item-center gap-3"
                 >
                   {priceList.map((price) => (
-                    <div className="flex items-center  gap-4">
+                    <div key={price} className="flex items-center gap-4">
                       <RadioGroupItem value={price} id={price} />
                       <Label className="text-lg" htmlFor={price}>
                         R${price}

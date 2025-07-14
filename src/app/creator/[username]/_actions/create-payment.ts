@@ -24,7 +24,21 @@ export async function createPayment(data: CreatePaymentSchema) {
   }
 
   try {
-    console.log(data);
+    const creator = await prisma.user.findUnique({
+      where: {
+        id: data.creatorId,
+      },
+      select: {
+        connectedStripeAccountId: true,
+      },
+    });
+
+    if (!creator?.connectedStripeAccountId) {
+      return {
+        data: null,
+        error: "Falha ao criar pagamento, tente novamente mais tarde.",
+      };
+    }
   } catch (error) {
     return {
       data: null,
